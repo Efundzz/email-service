@@ -1,0 +1,37 @@
+spring:
+  freemarker:
+    template-loader-path: classpath:/templates/
+  mail:
+    host: mail.efundzz.in
+    port: 465
+    username: purviewef@efundzz.in
+    password: K1U{#!fZwiVm
+    properties:
+        mail:
+            smtp:
+              auth: true
+              starttls:
+                  enable: true
+              socketFactory:
+                port: 465
+                class: javax.net.ssl.SSLSocketFactory
+server:
+  port: 8085
+app:
+  email:
+    to:
+      VH: "vijay.s@purviewservices.com"
+    bcc:
+      VH:
+        - "vijay.s@purviewservices.com"
+        - "radha.s@purviewservices.com"
+      EF: "vijay.s@purviewservices.com"
+      RL: "vijay.s@purviewservices.com"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+DOCUPLOAD_S3_PATH: efundzz-bucket/mvp

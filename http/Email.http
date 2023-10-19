@@ -1,0 +1,12 @@
+POST {{base_url}}/api/emails HTTP/1.1
+Content-Type: application/json
+
+{
+  "to": "radhait.17@gmail.com",
+  "templatePath": "ApplicationSubmit.ftl",
+  "subject": "Application Submitted",
+  "dataModel": {
+    "fullName": "Radha",
+    "referenceNumber": "EF-PL-00001"
+  }
+}

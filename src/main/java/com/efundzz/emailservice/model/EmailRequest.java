@@ -15,6 +15,7 @@ import java.util.Map;
 public class EmailRequest {
     private String to;
     private List<String> bcc;
+    //TODO: to get the brand name and the email_name instead of tempaltePath
     private String templatePath;
     private Map<String, Object> dataModel;
     private String subject;

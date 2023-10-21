@@ -1,5 +1,8 @@
 package com.efundzz.emailservice.service;
 
+import com.efundzz.emailservice.model.EmailRequest;
+import com.efundzz.emailservice.model.sns.SNSRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itextpdf.html2pdf.HtmlConverter;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -11,11 +14,15 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import static com.efundzz.emailservice.util.AppConstants.NOTIFICATION;
+import static com.efundzz.emailservice.util.AppConstants.SUBSCRIPTION_CONFIRMATION;
 
 @Service
 public class EmailService {
@@ -28,6 +35,27 @@ public class EmailService {
 
     @Autowired
     private S3Service s3Service;
+
+    @Autowired
+    RestTemplate restTemplate;
+
+    public void sendEmail(String message) throws IOException, MessagingException, TemplateException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        SNSRequest snsRequest = objectMapper.readValue(message, SNSRequest.class);
+
+        if (SUBSCRIPTION_CONFIRMATION.equalsIgnoreCase(snsRequest.getType())) {
+            confirmSubscription(snsRequest.getSubscribeURL());
+        }
+        else if(NOTIFICATION.equalsIgnoreCase(snsRequest.getType())) {
+            EmailRequest emailRequest = objectMapper.readValue(snsRequest.getMessage(), EmailRequest.class);
+            sendEmail(emailRequest.getDataModel(), emailRequest.getTemplatePath(), emailRequest.getTo(), emailRequest.getSubject());
+            //To add a step in stepdata/audit table for result from email being sent
+        }
+    }
+
+    public void confirmSubscription(String subscribeUrl) {
+        restTemplate.getForObject(subscribeUrl, String.class);
+    }
 
     public void sendEmail(Map<String, Object> dataModel, String templatePath, String to, String subject) throws MessagingException, IOException, TemplateException {
         MimeMessage message = mailSender.createMimeMessage();

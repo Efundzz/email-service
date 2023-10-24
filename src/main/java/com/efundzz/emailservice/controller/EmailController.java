@@ -30,6 +30,7 @@ public class EmailController {
     public ResponseEntity<String> sendEmail(@RequestBody String message) {
         try {
             //TODO: To write proper logs
+            log.info(message);
             emailService.sendEmail(message);
             return new ResponseEntity<>("Email sent successfully", HttpStatus.OK);
         } catch (MessagingException | IOException | TemplateException e) {

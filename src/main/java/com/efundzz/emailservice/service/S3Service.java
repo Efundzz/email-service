@@ -10,6 +10,7 @@ import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.securitylake.model.S3Exception;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -31,20 +32,13 @@ public class S3Service {
     @Value("${DOCUPLOAD_S3_PATH}")
     private String bucketName;
 
+    @Autowired
     AmazonS3 s3Client = null;
     Regions region = Regions.EU_WEST_1;
     String accessKey = "AKIATTG4WIZ243GNZZG5";
     String secretKey = "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";
 
     public URL getPresignedUrl(String operation, String fileName) {
-        // Set the AWS credentials
-        BasicAWSCredentials awsCreds = new BasicAWSCredentials(accessKey, secretKey);
-
-        // Create an S3 client
-        s3Client = AmazonS3ClientBuilder.standard()
-                .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
-                .withRegion(region)
-                .build();
 
         Date expiration = new Date(System.currentTimeMillis() + 3600000); // 1 hour from now
 
@@ -56,12 +50,6 @@ public class S3Service {
 
     public void uploadFile(String fileName) {
         try {
-            BasicAWSCredentials awsCreds = new BasicAWSCredentials(accessKey, secretKey);
-
-            s3Client = AmazonS3ClientBuilder.standard()
-                    .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
-                    .withRegion(region)
-                    .build();
 
             File file = new File(fileName);
             PutObjectRequest request = new PutObjectRequest(bucketName, fileName, file);

@@ -9,6 +9,7 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -24,6 +25,7 @@ import java.util.Map;
 import static com.efundzz.emailservice.util.AppConstants.NOTIFICATION;
 import static com.efundzz.emailservice.util.AppConstants.SUBSCRIPTION_CONFIRMATION;
 
+@Slf4j
 @Service
 public class EmailService {
 
@@ -43,6 +45,7 @@ public class EmailService {
         ObjectMapper objectMapper = new ObjectMapper();
         SNSRequest snsRequest = objectMapper.readValue(message, SNSRequest.class);
 
+        log.info("Received request with requestType: {}",snsRequest.getType());
         if (SUBSCRIPTION_CONFIRMATION.equalsIgnoreCase(snsRequest.getType())) {
             confirmSubscription(snsRequest.getSubscribeURL());
         }
